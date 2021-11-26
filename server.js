@@ -1,20 +1,25 @@
 const express = require("express");
+const cors = require("cors");
 
-class Server{
-    contructor(){
+class Server {
+    constructor(){
         this.app = express();
         this.port = process.env.PORT;
+        this.rutasUsuarios = '/usuarios'; 
 
+        this.middlewares();
         this.routes();
     }
 
-    routes(){
-        this.app.get("/", function (req, res) {
-            res.send("hola mundo"); 
-        });
+middlewares(){
+    this.app.use(cors());
+}
+
+    routes() {
+        this.app.use(this.rutasUsuarios, require('./routes/usuarios'));
     }
 
-    listen() {
+    listen () {
         this.app.listen(this.port);
     }
 }
