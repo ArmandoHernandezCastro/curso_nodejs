@@ -1,11 +1,14 @@
 const {request, response } = require("express");
 const pool = require("../db/conexion");
 const usuariosQueries = require("../models/usuarios");
+const bcryptjs = require("bcryptjs");
 
 const usuariosGet = async (req = request, res = response) => {
     let conn;
   
     try {
+      const salt = bcryptjs.genSaltSync();
+      const passwordHash = bcryptjs.hashSync(password, salt);
       conn = await pool.getConnection();
   
       const usuarios = await conn.query(usuariosQueries.selectUsuarios);
@@ -32,7 +35,7 @@ const usuariosPost = async (req = request, res = response) => {
       const usuarios = await conn.query(usuariosQueries.insertUsuario, [
         nombre,
         email,
-        password,
+        passwordHash,
         status,
       ]);
   
@@ -92,5 +95,6 @@ const usuariosDelete = async (req = request, res = response) => {
       if (conn) conn.end();
     }
 };
+
 
 module.exports = {usuariosGet, usuariosPost, usuariosPut, usuariosDelete};
